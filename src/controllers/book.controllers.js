@@ -1,4 +1,4 @@
-import Book from "../models/book.model";
+import Book from "../models/book.model.js";
 
 //Función para añadir libros
 
