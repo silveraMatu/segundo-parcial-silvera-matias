@@ -28,8 +28,9 @@ export const createBook = async(req, res)=>{
       
 
         const book = await Book.create({ title, author, pages, genre, description });
-        res.status(201).json({Message: "Se ha registrado el libro exitósamente!"}, book);
+        res.status(201).json({Message: "Se ha registrado el libro exitósamente!", book} );
     } catch (err) {
+        console.log("error al crear el libro: ", err)
         res.status(500).json({Error: err.message});
     }
 }
@@ -72,11 +73,29 @@ export const updateBooks = async(req, res)=>{
         if(typeof req.body[values] === "string"){
           req.body[values] = req.body[values].trim();
         }
-      }
     }
+}
 
-    try {
+try {
+    
+    const book = await Book.findByPk(req.params.id);
+    if(!book) return res.status(404).json({errorMessage: "El libro no ha sido encontrado."});
 
+    //Validacion para que el usuario al momento de actualizar un valor no pueda pasar un string vacio
+    //y el valor solo se actualize cuando el dato sea diferente de undefined
+        if(title !== undefined) book.title = title;
+        if(title === "") return res.status(400).json({errorMessage: "'title' no puede estar vacío."});
+
+        if(author !== undefined) book.title = author;
+        if(author === "") return res.status(400).json({errorMessage: "'author' no puede estar vacío."});
+        
+        if(pages !== undefined) book.pages = pages;
+        
+        if(genre !== undefined) book.genre = genre;
+        if (genre === "") return res.status(400).json({errorMessage: "'genre' no puede estar vacío."});
+        
+        if(description !== undefined) book.description = description;
+       
         //validar que title sea único.
         if(title){
             const titleUnique = await Book.findOne({where: {title}});
@@ -88,9 +107,8 @@ export const updateBooks = async(req, res)=>{
             where: {id: req.params.id}
         });
 
-        if(updated === 0) return res.status(404).json({errorMessage: "El libro no ha sido encontrado."});
-       
-        res.status(201).json({ Message: "Se han actualizado los datos del libro." })
+        if(updated > 0) return res.status(201).json({ Message: "Se han actualizado los datos del libro." });
+    
     } catch (err) {
         res.status(500).json({Error: err.message});
     }
@@ -100,10 +118,10 @@ export const updateBooks = async(req, res)=>{
 
 export const deleteBooks = async(req, res)=>{
     try {
-        const deleted = Book.destroy({where: {id: req.params.id}});
-        if(deleted === 0) return res.status(404).json({Message: "No se ha encontrado el libro"});
+        const deleted = await Book.destroy({where: {id: req.params.id}});
+        if(!deleted) return res.status(404).json({Message: "No se ha encontrado el libro"});
 
-        res.status(204).json({Message: "El libro ha sido eliminado."})
+        return res.status(204).json({Message: "El libro ha sido eliminado."});
     } catch (err) {
         res.status(500).json({Error: err.message});
     }

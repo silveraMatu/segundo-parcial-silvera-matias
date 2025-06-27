@@ -9,19 +9,19 @@ const Book = sequelize.define("book",{
     },
     author: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: false
     },
     pages: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: false
     },
     genre: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: false
     },
     description: {
-        type: DataTypes.STRING,
-    },
+        type: DataTypes.STRING
+    }
 });
 
 export default Book;

@@ -15,6 +15,4 @@ startDB().then(()=>{
     app.listen(PORT, ()=>{
         console.log(`Servidor escuchando en el puerto ${PORT}`);
     })
-}).catch(err=>{
-    console.log(err);
-});
+})
